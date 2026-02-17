@@ -41,3 +41,6 @@ select
     _source_file
 from ranked
 where _rn = 1
+    and order_line_id like 'L20%'
+    and order_id like 'O20%'
+    and product_id like 'P%'

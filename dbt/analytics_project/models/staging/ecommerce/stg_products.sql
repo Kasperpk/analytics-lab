@@ -49,3 +49,5 @@ select
     _source_file
 from ranked
 where _rn = 1
+    and product_id is not null
+    and product_id like 'P%'

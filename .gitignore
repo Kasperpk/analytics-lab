@@ -8,3 +8,9 @@ wheels/
 
 # Virtual environments
 .venv
+
+# VS Code Local History snapshots
+.history/
+
+# Local dbt user metadata
+dbt/analytics_project/.user.yml

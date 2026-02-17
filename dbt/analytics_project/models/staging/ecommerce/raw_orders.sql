@@ -9,5 +9,10 @@ from read_csv_auto(
     all_varchar=true,
     union_by_name=true,
     filename=true,
-    ignore_errors=true
+    ignore_errors=true,
+    delim=',',
+    quote='"',
+    escape='"',
+    strict_mode=false,
+    null_padding=true
 )

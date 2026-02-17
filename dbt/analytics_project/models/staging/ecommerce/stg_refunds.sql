@@ -37,3 +37,5 @@ select
     _source_file
 from ranked
 where _rn = 1
+    and refund_id like 'R20%'
+    and order_line_id like 'L20%'
