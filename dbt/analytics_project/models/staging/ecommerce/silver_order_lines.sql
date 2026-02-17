@@ -1,4 +1,9 @@
-{{ config(materialized='table', schema='silver') }}
+{{ config(
+    materialized='incremental',
+    incremental_strategy='merge',
+    unique_key='order_line_id',
+    schema='silver'
+) }}
 
 with typed as (
     select

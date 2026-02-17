@@ -89,16 +89,33 @@ Implemented data tests include:
 - `unique` checks on primary keys,
 - `relationships` checks across key joins (silver and gold).
 
+Additional examples included:
+- Python unit test: `tests/test_finance_ingest.py` (validates `normalize_columns`).
+- dbt singular data test: `tests/silver_order_lines_non_negative_quantity.sql` (fails if any `quantity < 0` in `silver_order_lines`).
+
 Current project status: `dbt build` passes with all models and tests.
 
-## 7) Incremental strategy
-For this assignment, full rebuild is used (fast on DuckDB).
+Run tests:
 
-Production-oriented approach:
-- append by file date at bronze,
-- incremental merge in silver on natural keys,
-- rolling backfill window for late-arriving records,
-- periodic quality snapshots and anomaly alerts.
+```bash
+uv run pytest
+cd dbt/analytics_project
+uv run dbt test --profiles-dir .
+```
+
+## 7) Incremental strategy
+Current behavior:
+- Bronze is rebuilt each run from all daily files (`dt=*`) and persisted as tables.
+- Silver is incremental with `merge` upserts on business keys:
+	- `silver_orders` on `order_id`
+	- `silver_order_lines` on `order_line_id`
+	- `silver_products` on `product_id`
+	- `silver_refunds` on `refund_id`
+
+Effect:
+- New rows are inserted in silver.
+- Changed rows are updated in silver.
+- Bronze remains a re-created canonical landing from all available raw daily files.
 
 ## 8) Orchestration
 Single-command orchestration via dbt:
@@ -107,6 +124,21 @@ Single-command orchestration via dbt:
 cd dbt/analytics_project
 uv run dbt build --profiles-dir .
 ```
+
+How tests run:
+- `dbt build` runs models, then tests (schema tests + singular data tests).
+- If any test fails, command exits non-zero and the run is marked failed.
+
+Daily run + status flag (Windows):
+- Script: [orchestration/run_daily_dbt.ps1](orchestration/run_daily_dbt.ps1)
+- It runs `uv run dbt build --profiles-dir .`
+- It writes a status file: [logs/daily_dbt_status.json](logs/daily_dbt_status.json)
+	- `status = PASS` when everything succeeds
+	- `status = FAIL` when a model/test fails
+
+Schedule it daily with Windows Task Scheduler:
+- Program/script: `powershell.exe`
+- Arguments: `-ExecutionPolicy Bypass -File C:\Users\45255\analytics-lab\orchestration\run_daily_dbt.ps1`
 
 ## 9) Power BI integration
 Recommended semantic model:
