@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: stg_products
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_orders
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_order_lines
+    columns:
+      - name: order_line_id
+        tests:
+          - not_null
+          - unique
+      - name: order_id
+        tests:
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: product_id
+        tests:
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
+
+  - name: stg_refunds
+    columns:
+      - name: refund_id
+        tests:
+          - not_null
+          - unique
+      - name: order_line_id
+        tests:
+          - relationships:
+              to: ref('stg_order_lines')
+              field: order_line_id
