@@ -289,6 +289,10 @@ Net Quantity = SUM(gold_fct_sales[net_quantity])
 - KPI cards: `Gross Sales`, `Refund Amount`, `Net Sales`.
 - Slicers: date, product type, country, customer.
 
+<img width="1230" height="593" alt="image" src="https://github.com/user-attachments/assets/08ec67d9-c3f9-4465-a9c5-bc755e8e8ef7" />
+
+
+
 ### 9.7 Refresh behavior and daily operations
 - Power BI reads whatever exists in `warehouse.duckdb` at refresh time.
 - Daily process should be:
