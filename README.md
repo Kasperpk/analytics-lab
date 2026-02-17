@@ -8,6 +8,91 @@ Build a small, production-minded data platform that:
 
 This project intentionally keeps raw data noisy (duplicates, late rows, schema drift, malformed records) and applies cleaning logic in the pipeline.
 
+## Prerequisites (Reproducibility Checklist)
+
+This project was built and validated on **Windows + VS Code** with local dbt execution and DuckDB.
+Use the checklist below to reproduce results end-to-end.
+
+### 1) Required software
+
+- **Windows 10/11**
+- **Git** (to clone the repository)
+- **Python 3.11+**
+- **uv** (Python package/environment manager)
+- **Visual Studio Code** (recommended IDE)
+- **dbt Core + dbt-duckdb** (installed via project dependencies)
+- **DuckDB** (used through dbt adapter; optional CLI)
+
+### 2) Optional software (only if using cloud migration path)
+
+- **Databricks workspace** (AWS/Azure/GCP depending on target architecture)
+- **Cloud object storage** (S3/ADLS/GCS depending on workspace cloud)
+- **Power BI Desktop** (for BI consumption and model validation)
+
+### 3) Access and permissions needed
+
+- Local read/write permission to this repo folder
+- Permission to create local files in:
+	- `data/raw/`
+	- `data/warehouse.duckdb`
+	- `logs/`
+- If scheduling daily runs on Windows:
+	- Permission to create a **Task Scheduler** task
+- If using Databricks/cloud:
+	- Permission to SQL Warehouse/cluster
+	- Permission to storage location (bucket/container)
+	- Permission to create/read schemas and tables
+
+### 4) Clone and bootstrap
+
+1. Clone repository:
+	 - `git clone <repo-url>`
+	 - `cd analytics-lab`
+
+2. Install dependencies with uv:
+	 - `uv sync`
+
+3. Confirm tools:
+	 - `uv --version`
+	 - `python --version`
+	 - `uv run dbt --version`
+
+### 5) Reproduce local pipeline results
+
+From repository root:
+
+1. (Optional) Generate/refresh raw input data.
+2. Run dbt models + tests:
+	 - `cd dbt/analytics_project`
+	 - `uv run dbt build --profiles-dir .`
+3. Expected result:
+	 - dbt run succeeds
+	 - tests pass
+	 - curated models available in DuckDB warehouse
+
+### 6) Run daily orchestration (Windows)
+
+- Script: `orchestration/run_daily_dbt.ps1`
+- Manual run:
+	- `powershell -ExecutionPolicy Bypass -File .\orchestration\run_daily_dbt.ps1`
+- Output status file:
+	- `logs/daily_dbt_status.json` (PASS/FAIL + timestamp)
+
+### 7) Security prerequisites
+
+- **Do not commit secrets** (service-account JSON, access keys, tokens).
+- Keep credentials in secure secret stores / environment variables.
+- Rotate any exposed keys immediately.
+
+### 8) Power BI prerequisites (local mode)
+
+- Power BI Desktop installed
+- DuckDB ODBC driver (if using ODBC connection path)
+- Access to the local `data/warehouse.duckdb` file
+- Relationships/measures configured as documented in the Power BI section
+
+If all items above are satisfied, another developer should be able to reproduce local dbt pipeline and test outcomes.
+
 ## 2) Scope and assumptions
 - Raw data lands daily as CSV files in `data/raw/dt=YYYY-MM-DD/`.
 - Source files include:
