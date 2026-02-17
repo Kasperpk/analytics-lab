@@ -1,21 +1,21 @@
 version: 2
 
 models:
-  - name: stg_products
+  - name: silver_products
     columns:
       - name: product_id
         tests:
           - not_null
           - unique
 
-  - name: stg_orders
+  - name: silver_orders
     columns:
       - name: order_id
         tests:
           - not_null
           - unique
 
-  - name: stg_order_lines
+  - name: silver_order_lines
     columns:
       - name: order_line_id
         tests:
@@ -25,16 +25,16 @@ models:
         tests:
           - relationships:
               arguments:
-                to: ref('stg_orders')
+                to: ref('silver_orders')
                 field: order_id
       - name: product_id
         tests:
           - relationships:
               arguments:
-                to: ref('stg_products')
+                to: ref('silver_products')
                 field: product_id
 
-  - name: stg_refunds
+  - name: silver_refunds
     columns:
       - name: refund_id
         tests:
@@ -44,5 +44,5 @@ models:
         tests:
           - relationships:
               arguments:
-                to: ref('stg_order_lines')
+                to: ref('silver_order_lines')
                 field: order_line_id

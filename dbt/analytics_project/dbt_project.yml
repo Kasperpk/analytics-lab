@@ -34,9 +34,9 @@ models:
     example:
       +enabled: false
     staging:
-      +materialized: view
-      ecommerce:
-        +schema: staging
+      +schema: silver
+      +materialized: table
     marts:
+      +schema: gold
       +materialized: table
 
