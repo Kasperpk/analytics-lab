@@ -105,7 +105,8 @@ uv run dbt test --profiles-dir .
 
 ## 7) Incremental strategy
 Current behavior:
-- Bronze is rebuilt each run from all daily files (`dt=*`) and persisted as tables.
+- Bronze is incremental append from daily files (`dt=*`) and persists previously ingested rows.
+- Bronze ingestion is idempotent by source file path (`_source_file`): already ingested files are skipped on reruns.
 - Silver is incremental with `merge` upserts on business keys:
 	- `silver_orders` on `order_id`
 	- `silver_order_lines` on `order_line_id`
@@ -115,7 +116,7 @@ Current behavior:
 Effect:
 - New rows are inserted in silver.
 - Changed rows are updated in silver.
-- Bronze remains a re-created canonical landing from all available raw daily files.
+- Bronze remains append-only landing data unless a `--full-refresh` is explicitly run.
 
 ## 8) Orchestration
 Single-command orchestration via dbt:
