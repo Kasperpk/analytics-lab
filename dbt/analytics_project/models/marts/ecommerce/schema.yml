@@ -1,7 +1,10 @@
+# schema.yml files define metadata and data quality contracts for mart tables.
+# These tests protect BI-serving dimensions/facts from key and referential issues.
 version: 2
 
 models:
   - name: gold_dim_products
+    # Dimension key contract for product joins.
     columns:
       - name: product_id
         tests:
@@ -9,6 +12,7 @@ models:
           - unique
 
   - name: gold_dim_orders
+    # Dimension key contract for order joins.
     columns:
       - name: order_id
         tests:
@@ -16,6 +20,7 @@ models:
           - unique
 
   - name: gold_dim_customers
+    # Dimension key contract for customer joins.
     columns:
       - name: customer_id
         tests:
@@ -23,6 +28,7 @@ models:
           - unique
 
   - name: gold_dim_dates
+    # Date dimension guarantees one row per date_key/date_day.
     columns:
       - name: date_key
         tests:
@@ -34,6 +40,7 @@ models:
           - unique
 
   - name: gold_fct_sales
+    # Fact contracts ensure grain consistency and valid dimension relationships.
     columns:
       - name: order_line_id
         tests:

@@ -1,7 +1,10 @@
+# schema.yml files define metadata and test contracts for dbt resources.
+# Tests here are executed by `dbt test` (or `dbt build`) and fail the run if violations are found.
 version: 2
 
 models:
   - name: silver_products
+    # Contract: each curated product row must have one valid key.
     columns:
       - name: product_id
         tests:
@@ -9,6 +12,7 @@ models:
           - unique
 
   - name: silver_orders
+    # Contract: each curated order row must have one valid key.
     columns:
       - name: order_id
         tests:
@@ -16,6 +20,7 @@ models:
           - unique
 
   - name: silver_order_lines
+    # Contract: line keys are unique and reference valid order/product parents.
     columns:
       - name: order_line_id
         tests:
@@ -35,6 +40,7 @@ models:
                 field: product_id
 
   - name: silver_refunds
+    # Contract: refunds must have unique ids and reference an existing order line.
     columns:
       - name: refund_id
         tests:

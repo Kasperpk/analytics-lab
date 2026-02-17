@@ -1,3 +1,5 @@
+-- Reconciliation test: gross amount by order should match between
+-- silver line-level calculation and gold fact aggregation.
 with expected as (
     select
         l.order_id,
@@ -32,4 +34,6 @@ select
     actual_gross_amount,
     abs(expected_gross_amount - actual_gross_amount) as diff
 from recon
+-- Singular dbt tests fail when result rows are returned.
+-- Keep a small tolerance for floating-point arithmetic.
 where abs(expected_gross_amount - actual_gross_amount) > 0.01

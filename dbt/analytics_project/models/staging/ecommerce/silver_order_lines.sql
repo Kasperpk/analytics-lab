@@ -1,3 +1,5 @@
+-- Silver is persisted as incremental merge so daily loads perform upserts:
+-- new order_line_ids are inserted, existing order_line_ids are updated when values change.
 {{ config(
     materialized='incremental',
     incremental_strategy='merge',

@@ -1,3 +1,5 @@
+-- Silver is persisted as incremental merge so daily loads perform upserts:
+-- new refund_ids are inserted, existing refund_ids are updated when values change.
 {{ config(
     materialized='incremental',
     incremental_strategy='merge',
