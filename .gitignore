@@ -14,3 +14,15 @@ wheels/
 
 # Local dbt user metadata
 dbt/analytics_project/.user.yml
+
+# dbt build artifacts
+dbt/analytics_project/target/
+dbt/analytics_project/dbt_packages/
+dbt/analytics_project/logs/
+
+# Environment secrets
+.env
+
+# DuckDB database files
+*.duckdb
+*.duckdb.wal

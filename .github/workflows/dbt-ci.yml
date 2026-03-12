@@ -1,0 +1,53 @@
+name: dbt CI
+
+on:
+  pull_request:
+    paths:
+      - "dbt/**"
+      - ".github/workflows/dbt-ci.yml"
+
+env:
+  DBT_PROJECT_DIR: dbt/analytics_project
+
+jobs:
+  dbt-build:
+    name: dbt build (DuckDB)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Install dbt packages
+        working-directory: ${{ env.DBT_PROJECT_DIR }}
+        run: uv run dbt deps
+
+      - name: Verify connection
+        working-directory: ${{ env.DBT_PROJECT_DIR }}
+        run: uv run dbt debug --profiles-dir . --target ci
+
+      - name: Build models & run tests
+        working-directory: ${{ env.DBT_PROJECT_DIR }}
+        run: uv run dbt build --profiles-dir . --target ci
+
+      - name: Generate docs
+        working-directory: ${{ env.DBT_PROJECT_DIR }}
+        run: uv run dbt docs generate --profiles-dir . --target ci
+
+      - name: Upload manifest artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-manifest
+          path: ${{ env.DBT_PROJECT_DIR }}/target/manifest.json
+          retention-days: 30

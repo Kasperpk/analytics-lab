@@ -4,51 +4,107 @@ version: 2
 
 models:
   - name: silver_products
-    # Contract: each curated product row must have one valid key.
+    description: >
+      Curated product catalog — one row per product_id.
+      Deduped from bronze by latest file date / created_at.
+      Casts prices to double and is_active to boolean.
     columns:
       - name: product_id
+        description: Unique product identifier (e.g., P001).
         tests:
           - not_null
           - unique
+      - name: sku
+        description: Stock-keeping unit code.
+      - name: product_name
+        description: Human-readable product name.
+      - name: product_type
+        description: Product type classification.
+      - name: category
+        description: Product category.
+      - name: brand
+        description: Product brand.
+      - name: cost_price
+        description: Wholesale cost per unit.
+      - name: list_price
+        description: Retail list price per unit.
+      - name: is_active
+        description: Whether the product is currently active.
 
   - name: silver_orders
-    # Contract: each curated order row must have one valid key.
+    description: >
+      Curated order headers — one row per order_id.
+      Deduped from bronze by latest file date / order timestamp.
+      Casts timestamps and monetary amounts to proper types.
     columns:
       - name: order_id
+        description: Unique order identifier (e.g., O2024-0001).
         tests:
           - not_null
           - unique
+      - name: customer_id
+        description: Customer who placed the order.
+      - name: order_ts
+        description: Timestamp the order was placed.
+      - name: country
+        description: Two-letter country code.
+      - name: currency
+        description: Three-letter ISO currency code.
+      - name: payment_method
+        description: Payment method (card, bank_transfer, etc.).
+      - name: order_status
+        description: Current status of the order.
 
   - name: silver_order_lines
-    # Contract: line keys are unique and reference valid order/product parents.
+    description: >
+      Curated order line items — one row per order_line_id.
+      Deduped from bronze by latest file date / line timestamp.
+      Casts quantities and prices to proper numeric types.
     columns:
       - name: order_line_id
+        description: Unique line item identifier (e.g., L2024-0001).
         tests:
           - not_null
           - unique
       - name: order_id
+        description: Parent order FK.
         tests:
           - relationships:
               arguments:
                 to: ref('silver_orders')
                 field: order_id
       - name: product_id
+        description: Product FK.
         tests:
           - relationships:
               arguments:
                 to: ref('silver_products')
                 field: product_id
+      - name: quantity
+        description: Number of units ordered.
+      - name: unit_price
+        description: Price per unit at time of order.
 
   - name: silver_refunds
-    # Contract: refunds must have unique ids and reference an existing order line.
+    description: >
+      Curated refund events — one row per refund_id.
+      Deduped from bronze by latest file date / refund timestamp.
     columns:
       - name: refund_id
+        description: Unique refund identifier (e.g., R2024-0001).
         tests:
           - not_null
           - unique
       - name: order_line_id
+        description: The order line being refunded.
         tests:
           - relationships:
               arguments:
                 to: ref('silver_order_lines')
                 field: order_line_id
+      - name: refund_amount
+        description: Monetary amount refunded.
+      - name: refund_reason
+        description: Customer-provided reason for the refund.
+      - name: refund_status
+        description: Processing status (e.g., approved, pending).

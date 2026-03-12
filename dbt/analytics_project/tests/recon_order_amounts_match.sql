@@ -7,7 +7,7 @@ with expected as (
     from {{ ref('silver_order_lines') }} l
     inner join {{ ref('silver_orders') }} o
         on l.order_id = o.order_id
-    group by 1
+    group by l.order_id
 ),
 
 actual as (
@@ -15,7 +15,7 @@ actual as (
         order_id,
         sum(coalesce(gross_sales_amount, 0)) as actual_gross_amount
     from {{ ref('gold_fct_sales') }}
-    group by 1
+    group by order_id
 ),
 
 recon as (
