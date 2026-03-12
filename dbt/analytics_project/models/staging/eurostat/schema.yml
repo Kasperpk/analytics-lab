@@ -1,0 +1,97 @@
+version: 2
+
+models:
+  # ── Silver layer ──────────────────────────────────────────────
+
+  - name: silver_eurostat_gdp
+    description: >
+      GDP and main components — one row per country/year/component/unit.
+      Current prices (CP_MEUR) and chain-linked volumes (CLV10_MEUR).
+    columns:
+      - name: country_code
+        description: ISO-2 country code.
+        tests:
+          - not_null
+      - name: year
+        description: Calendar year (e.g. '2023').
+        tests:
+          - not_null
+      - name: gdp_component
+        description: "SNA component code: B1GQ (GDP), P3 (consumption), P5G (investment), P6 (exports), P7 (imports), B11 (net exports)."
+      - name: value_meur
+        description: Value in millions of EUR.
+
+  - name: silver_eurostat_unemployment
+    description: >
+      Unemployment rate — one row per country/month/age group/sex.
+      Seasonally adjusted, percentage of active population.
+    columns:
+      - name: country_code
+        tests:
+          - not_null
+      - name: month
+        description: Month in YYYY-MM format.
+        tests:
+          - not_null
+      - name: unemployment_rate_pct
+        description: Unemployment rate as percentage.
+
+  - name: silver_eurostat_hicp
+    description: >
+      HICP inflation — one row per country/month/price category.
+      Annual rate of change (percentage).
+    columns:
+      - name: country_code
+        tests:
+          - not_null
+      - name: month
+        tests:
+          - not_null
+      - name: price_category
+        description: "COICOP code: CP00 (all items), CP01 (food), CP04 (housing), CP07 (transport), NRG (energy)."
+      - name: inflation_rate_pct
+        description: Annual rate of change, percentage.
+
+  - name: silver_eurostat_gov_finance
+    description: >
+      Government deficit/surplus and gross debt — one row per country/year/indicator/unit.
+    columns:
+      - name: country_code
+        tests:
+          - not_null
+      - name: year
+        tests:
+          - not_null
+      - name: indicator_code
+        description: "B9 = deficit/surplus, GD = gross debt."
+      - name: obs_value
+        description: Observation value in the unit specified.
+
+  - name: silver_eurostat_confidence
+    description: >
+      Consumer confidence indicator — one row per country/month.
+      Balance statistic, seasonally adjusted.
+    columns:
+      - name: country_code
+        tests:
+          - not_null
+      - name: month
+        tests:
+          - not_null
+      - name: confidence_index
+        description: Consumer confidence balance indicator.
+
+  - name: silver_eurostat_interest_rates
+    description: >
+      Money market interest rates — one row per country/month/maturity.
+    columns:
+      - name: country_code
+        tests:
+          - not_null
+      - name: month
+        tests:
+          - not_null
+      - name: maturity_code
+        description: "IRT_M3 (3-month), IRT_M6 (6-month), IRT_M12 (12-month)."
+      - name: interest_rate_pct
+        description: Interest rate as percentage.

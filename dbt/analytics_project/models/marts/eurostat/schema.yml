@@ -1,0 +1,129 @@
+version: 2
+
+models:
+  - name: gold_dim_countries
+    description: >
+      Country dimension — one row per ISO-2 country code.
+      Includes full name, EU membership, and Euro area membership flags.
+    columns:
+      - name: country_code
+        description: ISO-2 country code (PK).
+        tests:
+          - not_null
+          - unique
+      - name: country_name
+        description: Full country name in English.
+      - name: is_eu_member
+        description: True if current EU-27 member state.
+      - name: is_eurozone
+        description: True if current Euro area member.
+
+  - name: gold_fct_gdp
+    description: >
+      GDP overview — one row per country/year.
+      Headline GDP, real growth rate, and demand-side components
+      (consumption, investment, exports, imports, net exports).
+    columns:
+      - name: country_code
+        tests:
+          - not_null
+          - relationships:
+              to: ref('gold_dim_countries')
+              field: country_code
+      - name: year
+        tests:
+          - not_null
+      - name: gdp_current_meur
+        description: Nominal GDP in millions of EUR (current prices).
+      - name: gdp_volume_meur
+        description: Real GDP in millions of EUR (chain-linked 2010 volumes).
+      - name: real_gdp_growth_pct
+        description: Year-over-year real GDP growth rate (%).
+
+  - name: gold_fct_unemployment
+    description: >
+      Labour market overview — one row per country/month.
+      Total, youth, and gender-split unemployment rates.
+    columns:
+      - name: country_code
+        tests:
+          - not_null
+          - relationships:
+              to: ref('gold_dim_countries')
+              field: country_code
+      - name: month
+        tests:
+          - not_null
+      - name: unemployment_rate_total
+        description: Total unemployment rate (% of active population, SA).
+      - name: youth_unemployment_rate
+        description: Under-25 unemployment rate (% of active population, SA).
+      - name: gender_gap_pp
+        description: Female minus male unemployment rate (percentage points).
+
+  - name: gold_fct_inflation
+    description: >
+      Price stability overview — one row per country/month.
+      Headline and category-level HICP annual rates of change.
+    columns:
+      - name: country_code
+        tests:
+          - not_null
+          - relationships:
+              to: ref('gold_dim_countries')
+              field: country_code
+      - name: month
+        tests:
+          - not_null
+      - name: headline_inflation_pct
+        description: All-items HICP annual rate of change (%).
+      - name: energy_inflation_pct
+        description: Energy component inflation (%).
+      - name: food_inflation_pct
+        description: Food & non-alcoholic beverages inflation (%).
+
+  - name: gold_fct_gov_finance
+    description: >
+      Government finances — one row per country/year.
+      Deficit/surplus and gross debt in % of GDP and million EUR.
+    columns:
+      - name: country_code
+        tests:
+          - not_null
+          - relationships:
+              to: ref('gold_dim_countries')
+              field: country_code
+      - name: year
+        tests:
+          - not_null
+      - name: deficit_surplus_pct_gdp
+        description: Government net lending/borrowing as % of GDP (negative = deficit).
+      - name: gross_debt_pct_gdp
+        description: Government gross debt as % of GDP.
+
+  - name: gold_fct_macro_overview
+    description: >
+      Macro dashboard — wide monthly snapshot per country joining inflation,
+      unemployment, consumer confidence, and interest rates.
+      Single entry-point for cross-indicator analysis.
+    columns:
+      - name: country_code
+        tests:
+          - not_null
+          - relationships:
+              to: ref('gold_dim_countries')
+              field: country_code
+      - name: period
+        description: Month in YYYY-MM format.
+        tests:
+          - not_null
+      - name: headline_inflation_pct
+        description: All-items HICP annual rate of change (%).
+      - name: unemployment_rate_total
+        description: Unemployment rate (%, SA).
+      - name: consumer_confidence
+        description: Consumer confidence balance indicator.
+      - name: interest_rate_3m
+        description: 3-month money market interest rate (%).
+      - name: interest_rate_12m
+        description: 12-month money market interest rate (%).

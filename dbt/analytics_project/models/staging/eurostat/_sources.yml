@@ -1,0 +1,23 @@
+# Source definitions for raw Eurostat parquet files produced by ingestion/eurostat_ingest.py.
+
+version: 2
+
+sources:
+  - name: eurostat_raw
+    description: >
+      Parquet files extracted from the Eurostat API containing European
+      macroeconomic indicators.  Produced by ingestion/eurostat_ingest.py
+      and landed in data/raw/eurostat/.
+    tables:
+      - name: gdp
+        description: GDP and main components (nama_10_gdp) — annual, current prices and chain-linked volumes.
+      - name: unemployment
+        description: Unemployment rate by sex and age (une_rt_m) — monthly, seasonally adjusted.
+      - name: hicp_inflation
+        description: HICP annual rate of change (prc_hicp_manr) — monthly inflation by category.
+      - name: gov_deficit_debt
+        description: Government deficit/surplus and debt (gov_10dd_edpt1) — annual.
+      - name: consumer_confidence
+        description: Consumer confidence indicator (ei_bsco_m) — monthly, seasonally adjusted.
+      - name: interest_rates
+        description: Money market interest rates (irt_st_m) — monthly averages by maturity.
