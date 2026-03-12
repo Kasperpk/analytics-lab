@@ -31,31 +31,38 @@ wheels = [
 [[package]]
 name = "analytics-lab"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
-    { name = "dbt-databricks" },
     { name = "dbt-duckdb" },
-    { name = "dbt-postgres" },
     { name = "duckdb" },
     { name = "polars" },
     { name = "pyarrow" },
     { name = "pytest" },
     { name = "requests" },
+]
+
+[package.optional-dependencies]
+cloud = [
+    { name = "dbt-databricks" },
+    { name = "dbt-postgres" },
+]
+finance = [
     { name = "yfinance" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "dbt-databricks", specifier = ">=1.10.0" },
+    { name = "dbt-databricks", marker = "extra == 'cloud'", specifier = ">=1.10.0" },
     { name = "dbt-duckdb", specifier = ">=1.10.0" },
-    { name = "dbt-postgres", specifier = ">=1.10.0" },
+    { name = "dbt-postgres", marker = "extra == 'cloud'", specifier = ">=1.10.0" },
     { name = "duckdb", specifier = ">=1.4.4" },
     { name = "polars", specifier = ">=1.38.1" },
     { name = "pyarrow", specifier = ">=23.0.0" },
     { name = "pytest", specifier = ">=8.4.2" },
     { name = "requests", specifier = ">=2.32.0" },
-    { name = "yfinance", specifier = ">=1.1.0" },
+    { name = "yfinance", marker = "extra == 'finance'", specifier = ">=1.1.0" },
 ]
+provides-extras = ["cloud", "finance"]
 
 [[package]]
 name = "annotated-types"
