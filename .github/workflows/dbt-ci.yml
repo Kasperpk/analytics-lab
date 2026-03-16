@@ -7,7 +7,7 @@ on:
       - ".github/workflows/dbt-ci.yml"
 
 env:
-  DBT_PROJECT_DIR: dbt/analytics_project
+  DBT_PROJECT_PATH: dbt/analytics_project
 
 jobs:
   dbt-build:
@@ -29,19 +29,19 @@ jobs:
         run: uv sync
 
       - name: Install dbt packages
-        working-directory: ${{ env.DBT_PROJECT_DIR }}
+        working-directory: ${{ env.DBT_PROJECT_PATH }}
         run: uv run dbt deps
 
       - name: Verify connection
-        working-directory: ${{ env.DBT_PROJECT_DIR }}
+        working-directory: ${{ env.DBT_PROJECT_PATH }}
         run: uv run dbt debug --profiles-dir . --target ci
 
       - name: Build models & run tests
-        working-directory: ${{ env.DBT_PROJECT_DIR }}
+        working-directory: ${{ env.DBT_PROJECT_PATH }}
         run: uv run dbt build --profiles-dir . --target ci
 
       - name: Generate docs
-        working-directory: ${{ env.DBT_PROJECT_DIR }}
+        working-directory: ${{ env.DBT_PROJECT_PATH }}
         run: uv run dbt docs generate --profiles-dir . --target ci
 
       - name: Upload manifest artifact
@@ -49,5 +49,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dbt-manifest
-          path: ${{ env.DBT_PROJECT_DIR }}/target/manifest.json
+          path: ${{ env.DBT_PROJECT_PATH }}/target/manifest.json
           retention-days: 30
