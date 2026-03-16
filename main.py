@@ -4,13 +4,10 @@ analytics-lab pipeline runner
 Single entry-point that orchestrates data extraction and dbt transformations.
 
 Usage:
-    uv run pipeline                 # runs the Eurostat pipeline (default)
+    uv run pipeline                 # runs the Eurostat pipeline
     uv run pipeline eurostat        # same as above
-    uv run pipeline ecommerce       # runs the ecommerce pipeline
-    uv run pipeline all             # runs every pipeline
 """
 
-import argparse
 import shutil
 import subprocess
 import sys
@@ -98,38 +95,6 @@ def run_eurostat() -> bool:
     return ok
 
 
-def run_ecommerce() -> bool:
-    """Build ecommerce bronze/silver/gold models → run tests."""
-    print(f"\n{'=' * 60}")
-    print("    E-commerce Analytics Pipeline")
-    print(f"{'=' * 60}")
-
-    t0 = time.time()
-    steps: list[tuple[str, bool]] = []
-
-    ok = _dbt(["deps"], label="Install dbt packages")
-    steps.append(("dbt deps", ok))
-    if not ok:
-        _summary(steps, t0)
-        return False
-
-    ok = _dbt(
-        ["build", "--select", "staging.ecommerce+", "marts.ecommerce+"],
-        label="Build & test ecommerce models",
-    )
-    steps.append(("dbt build", ok))
-
-    _summary(steps, t0)
-    return ok
-
-
-def run_all() -> bool:
-    """Run every pipeline in sequence."""
-    ok_euro = run_eurostat()
-    ok_ecom = run_ecommerce()
-    return ok_euro and ok_ecom
-
-
 def _summary(steps: list[tuple[str, bool]], t0: float) -> None:
     """Print a compact run summary."""
     elapsed = time.time() - t0
@@ -148,29 +113,8 @@ def _summary(steps: list[tuple[str, bool]], t0: float) -> None:
 
 # ── CLI ────────────────────────────────────────────────────────────────────────
 
-PIPELINES = {
-    "eurostat": run_eurostat,
-    "ecommerce": run_ecommerce,
-    "all": run_all,
-}
-
-
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        prog="pipeline",
-        description="Run analytics-lab data pipelines.",
-    )
-    parser.add_argument(
-        "pipeline",
-        nargs="?",
-        default="eurostat",
-        choices=PIPELINES.keys(),
-        help="Which pipeline to run (default: eurostat).",
-    )
-    args = parser.parse_args()
-
-    runner = PIPELINES[args.pipeline]
-    success = runner()
+    success = run_eurostat()
     sys.exit(0 if success else 1)
 
 

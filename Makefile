@@ -14,15 +14,7 @@ setup: ## Install Python deps + dbt packages
 
 .PHONY: eurostat
 eurostat: ## Run the Eurostat macroeconomic pipeline (extract → build → test)
-	uv run pipeline eurostat
-
-.PHONY: ecommerce
-ecommerce: ## Run the e-commerce pipeline (build → test)
-	uv run pipeline ecommerce
-
-.PHONY: all
-all: ## Run every pipeline
-	uv run pipeline all
+	uv run pipeline
 
 # ── Utilities ──────────────────────────────────────────────────────────────────
 
