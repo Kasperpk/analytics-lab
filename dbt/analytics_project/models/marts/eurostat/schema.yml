@@ -28,8 +28,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('gold_dim_countries')
-              field: country_code
+              arguments:
+                to: ref('gold_dim_countries')
+                field: country_code
       - name: year
         tests:
           - not_null
@@ -49,8 +50,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('gold_dim_countries')
-              field: country_code
+              arguments:
+                to: ref('gold_dim_countries')
+                field: country_code
       - name: month
         tests:
           - not_null
@@ -70,8 +72,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('gold_dim_countries')
-              field: country_code
+              arguments:
+                to: ref('gold_dim_countries')
+                field: country_code
       - name: month
         tests:
           - not_null
@@ -91,8 +94,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('gold_dim_countries')
-              field: country_code
+              arguments:
+                to: ref('gold_dim_countries')
+                field: country_code
       - name: year
         tests:
           - not_null
@@ -111,8 +115,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('gold_dim_countries')
-              field: country_code
+              arguments:
+                to: ref('gold_dim_countries')
+                field: country_code
       - name: period
         description: Month in YYYY-MM format.
         tests:

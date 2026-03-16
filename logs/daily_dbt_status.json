@@ -1,6 +1,0 @@
-﻿{
-    "timestamp_utc":  "2026-02-17T18:43:09.6966166Z",
-    "command":  "uv run dbt build --profiles-dir .",
-    "status":  "PASS",
-    "exit_code":  0
-}
